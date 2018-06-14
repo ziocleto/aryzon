@@ -129,7 +129,7 @@ app.get('/download/:name/:quantity', function(req, res){
   //res.sendFile(__dirname + '/index.html');  
 });
 
-var port = process.env.PORT || 3400;
+var port = process.env.PORT || 3000;
 http.listen(port, function(){
   console.log('listening on *:' + port);
 });
