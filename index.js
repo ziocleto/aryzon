@@ -69,7 +69,7 @@ app.get('/generate/:quantity', function(req, res) {
 });
 
 app.get('/reset', function(req, res){
-  db.collection('codes').updateMany({}, { $set: { "downloaded" : false, "use_case" : "", "date_downloaded" : -1 }}, function (err, entry) {
+  db.collection('codes').updateMany({}, { $set: { "downloaded" : false, "used" : false, "use_case" : "", "date_downloaded" : -1, "date_used" : -1 }}, function (err, entry) {
     if (err) {
       handleError(err);
     } else {
@@ -83,16 +83,10 @@ async function ctoArray( cursor ) {
   return ret;
 }
 
-app.get('/download/:name/:quantity', function(req, res){
+function downloadCodes ( name, quantity, res ) {
   var tn = Date.now();
   var updatedIndex = 0;
   var codes = "";
-  // var cursor = db.collection('codes').findAndModify( { query : { "downloaded" : false }, 
-  //                                                      update: { $set : { "downloaded" : true, "use_case" : req.params.name, "date_downloaded" : tn } } }
-  //                                                  ).limit(parseInt(req.params.quantity));
-
-  var quantity = parseInt(req.params.quantity);
-  var name = req.params.name;
 
   db.collection('codes').find( { "downloaded" : false } ).limit(quantity).forEach(function (elem) { 
       elem.downloaded = true; 
@@ -113,17 +107,42 @@ app.get('/download/:name/:quantity', function(req, res){
       }
     }.bind(updatedIndex).bind(codes).bind(quantity).bind(name)
   );
+}
 
-  //res.send('downlaoded' );
-  // var cursor = db.collection('codes').find().limit(parseInt(req.params.quantity));
-  // var elems = ctoArray(cursor);
+app.get('/download/:name/:quantity', function(req, res){
+  // var cursor = db.collection('codes').findAndModify( { query : { "downloaded" : false }, 
+  //                                                      update: { $set : { "downloaded" : true, "use_case" : req.params.name, "date_downloaded" : tn } } }
+  //                                                  ).limit(parseInt(req.params.quantity));
+  if ( isNaN(req.params.quantity) ) {
+    res.send('GamerSan that is and invalid number');
+    return;
+  }
 
-  // for ( var c = 0; c < elems.length; c++ ) {
-  //   codeconc += "aaa";
-  // }
+  var quantity = parseInt(req.params.quantity);
+  if ( quantity > 10 ) {
+    res.send('GamerSan that is too big, dont be silly, but I know it was just a mistake...');
+    return;
+  }
 
-  //res.send('Downloaded codes: ' + codeconc);
-  //util.inspect(elems)
+  var name = req.params.name;  
+  downloadCodes( name, quantity, res );
+
+  console.log('Downloaded codes data: ${req.params.name}, ${req.params.quantity}');
+  //res.sendFile(__dirname + '/index.html');  
+});
+
+app.get('/download/:name/:quantity/:forreal?', function(req, res){
+  // var cursor = db.collection('codes').findAndModify( { query : { "downloaded" : false }, 
+  //                                                      update: { $set : { "downloaded" : true, "use_case" : req.params.name, "date_downloaded" : tn } } }
+  //                                                  ).limit(parseInt(req.params.quantity));
+  if ( isNaN(req.params.quantity) ) {
+    res.send('GamerSan that is and invalid number');
+    return;
+  }
+
+  var name = req.params.name;  
+  var quantity = parseInt(req.params.quantity);
+  downloadCodes( name, quantity, res );
 
   console.log('Downloaded codes data: ${req.params.name}, ${req.params.quantity}');
   //res.sendFile(__dirname + '/index.html');  
