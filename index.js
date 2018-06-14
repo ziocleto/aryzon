@@ -141,6 +141,21 @@ app.get('/register_used/:code', function(req, res){
                                            });
 });
 
+app.get('/list/:use_case', function(req, res){
+  var use_case = req.params.use_case;
+  var query = db.collection('codes').find( { "use_case" : use_case }, ( err, doc ) => {  
+      if (err || doc == null ) {
+        res.send( { "result": "error" } ); 
+      } else {        
+        res.json( util.inspect(doc) );
+        // let out = "";
+        // console.log(doc);
+        // doc.forEach( myDoc => { out += "user: " + myDoc.code; } )
+        // res.send( "{}" + out );
+      }
+    });
+});
+
 app.get('/use/:code', function(req, res){
   var code = req.params.code;
   db.collection('codes').findOne( { "downloaded" : true, "code" : code, "used" : false }, ( err, doc ) => {  
