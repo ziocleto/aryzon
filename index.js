@@ -149,7 +149,7 @@ app.get('/use/:code', function(req, res){
     });
 });
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 3000;
 http.listen(port, function(){
   console.log('listening on *:' + port);
 });
