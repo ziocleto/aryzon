@@ -129,6 +129,26 @@ app.get('/download/:name/:quantity', function(req, res){
   //res.sendFile(__dirname + '/index.html');  
 });
 
+app.get('/register_used/:code', function(req, res){
+  var tn = Date.now();
+  var code = req.params.code;
+  db.collection('codes').findOneAndUpdate( { "code" : code, "used" : false }, 
+                                           { $set : { "used" : true, "date_used" : tn } },
+                                           ( err, doc ) => {  
+                                             let result = (err || doc == null ) ? "error" : "ok";
+                                             if ( doc && doc.value == null ) result = "error";
+                                             res.send( { "result": result } ); 
+                                           });
+});
+
+app.get('/use/:code', function(req, res){
+  var code = req.params.code;
+  db.collection('codes').findOne( { "downloaded" : true, "code" : code, "used" : false }, ( err, doc ) => {  
+      let result = (err || doc == null ) ? "error" : "ok";
+      res.send( { "result": result } ); 
+    });
+});
+
 var port = process.env.PORT || 3000;
 http.listen(port, function(){
   console.log('listening on *:' + port);
