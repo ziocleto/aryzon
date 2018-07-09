@@ -182,7 +182,7 @@ app.get('/query/:code/', function(req, res){
         res.send( { "result": "Code doesn't exist/invalid" } );   
       } else {
         ddt = new Date(doc.date_downloaded);
-        ddu = new Date(doc.date_downloaded);
+        ddu = new Date(doc.date_used);
         const dd = ( doc.date_downloaded != -1 ) ? ddt.toUTCString() : "Never";
         const du = ( doc.date_used != -1 ) ? ddu.toUTCString() : "Never";
         const out = { "code": doc.code, "use case" : doc.use_case, "downloaded/printed":  dd, "used" : du }; 
