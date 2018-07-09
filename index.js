@@ -160,17 +160,34 @@ app.get('/register_used/:code', function(req, res){
                                            });
 });
 
-app.get('/list/:code', function(req, res){
+app.get('/list/:use_case', function(req, res){
   var use_case = req.params.use_case;
-  var query = db.collection('codes').find( { "code" : code }, ( err, doc ) => {  
+  var query = db.collection('codes').count( { "use_case" : use_case }, ( err, doc ) => {  
       if (err || doc == null ) {
         res.send( { "result": "error" } ); 
       } else {
-        res.json( util.inspect(doc) );
+        res.send( { "total": doc } ); 
+        // //res.json( util.inspect(doc) );
         // let out = "";
-        // console.log(doc);
+        // // console.log(doc);
         // doc.forEach( myDoc => { out += "user: " + myDoc.code; } )
-        // res.send( "{}" + out );
+        // res.send( out );
+      }
+    });
+});
+
+app.get('/list/used/:use_case', function(req, res){
+  var use_case = req.params.use_case;
+  var query = db.collection('codes').count( { "use_case" : use_case, "used" : true }, ( err, doc ) => {  
+      if (err || doc == null ) {
+        res.send( { "result": "error" } ); 
+      } else {
+        res.send( { "total": doc } ); 
+        // //res.json( util.inspect(doc) );
+        // let out = "";
+        // // console.log(doc);
+        // doc.forEach( myDoc => { out += "user: " + myDoc.code; } )
+        // res.send( out );
       }
     });
 });
