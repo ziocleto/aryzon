@@ -160,17 +160,33 @@ app.get('/register_used/:code', function(req, res){
                                            });
 });
 
-app.get('/list/:use_case', function(req, res){
+app.get('/list/:code', function(req, res){
   var use_case = req.params.use_case;
-  var query = db.collection('codes').find( { "use_case" : use_case }, ( err, doc ) => {  
+  var query = db.collection('codes').find( { "code" : code }, ( err, doc ) => {  
       if (err || doc == null ) {
         res.send( { "result": "error" } ); 
-      } else {        
+      } else {
         res.json( util.inspect(doc) );
         // let out = "";
         // console.log(doc);
         // doc.forEach( myDoc => { out += "user: " + myDoc.code; } )
         // res.send( "{}" + out );
+      }
+    });
+});
+
+app.get('/query/:code/', function(req, res){
+  var code = req.params.code;
+  db.collection('codes').findOne( { "code" : code }, ( err, doc ) => {  
+      if (err || doc == null ) {
+        res.send( { "result": "Code doesn't exist/invalid" } );   
+      } else {
+        ddt = new Date(doc.date_downloaded);
+        ddu = new Date(doc.date_downloaded);
+        const dd = ( doc.date_downloaded != -1 ) ? ddt.toUTCString() : "Never";
+        const du = ( doc.date_used != -1 ) ? ddu.toUTCString() : "Never";
+        const out = { "code": doc.code, "use case" : doc.use_case, "downloaded/printed":  dd, "used" : du }; 
+        res.send( JSON.stringify(out) ); 
       }
     });
 });
