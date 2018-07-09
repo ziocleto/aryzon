@@ -1,3 +1,6 @@
+// Connection string 
+// ssh -i ~/.ssh/do_again root@206.189.126.3
+
 const util = require('util');
 var app = require('express')();
 const fs = require('fs');
