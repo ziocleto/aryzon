@@ -91,7 +91,7 @@ function downloadCodes ( name, quantity, res ) {
   var updatedIndex = 0;
   var codes = "";
 
-  db.collection('codes').find( { "downloaded" : false } ).limit(quantity).forEach(function (elem) { 
+  db.collection('codes').find( { 'code' : { '$regex' : /([^O0o]|-){11}/, '$options' : 'i' }, "downloaded" : false } ).limit(quantity).forEach(function (elem) { 
       elem.downloaded = true; 
       elem.use_case = name;
       elem.date_downloaded = tn;
