@@ -8,6 +8,8 @@ var http = require('http').Server(app);
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
+var version = '1010';
+
 var mongoDB = 'mongodb://localhost:27017/aryzon';
 mongoose.connect(mongoDB);
 var db = mongoose.connection;
@@ -217,6 +219,10 @@ app.get('/use/:code', function(req, res){
       let result = (err || doc == null ) ? "error" : "ok";
       res.send( { "result": result } ); 
     });
+});
+
+app.get('/version', function(req, res){
+  res.send( { "version": version } ); 
 });
 
 var port = process.env.PORT || 3000;
