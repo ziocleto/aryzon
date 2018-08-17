@@ -197,6 +197,27 @@ app.get('/list/used/:use_case', function(req, res){
     });
 });
 
+app.get('/overview', function(req, res){
+  let ret = {};
+
+  db.collection('codes').distinct( "use_case", function( err, doc) {
+    if ( err ) {
+      res.send( { "result": "error" } ); 
+    } else {
+      let countDone = 0;
+      for ( let t = 0; t < doc.length; t++ ) {
+        db.collection('codes').count( { "use_case" : doc[t] }, ( err, doc2 ) => {
+          ret[doc[t]] = doc2;
+          ++countDone;
+          if ( countDone == doc.length ) {
+            res.send(ret);
+          }
+        });
+      }
+    }
+  });
+});    
+
 app.get('/query/:code/', function(req, res){
   var code = req.params.code;
   db.collection('codes').findOne( { "code" : code }, ( err, doc ) => {  
